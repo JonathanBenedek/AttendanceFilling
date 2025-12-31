@@ -1,11 +1,9 @@
 function getTimeFromObj(timeObj) {
-  if (!timeObj) return "09:00"; // default fallback
+  if (!timeObj) return "09:00";
 
-  // exactTime: use string as-is or convert number to HH:MM
+  // exactTime: string or number
   if (timeObj.exactTime !== undefined) {
-    if (typeof timeObj.exactTime === "string") {
-      return timeObj.exactTime; // <-- exact string, no change
-    }
+    if (typeof timeObj.exactTime === "string") return timeObj.exactTime;
     if (typeof timeObj.exactTime === "number") {
       const hour = Math.floor(timeObj.exactTime);
       const minutes = Math.round((timeObj.exactTime - hour) * 60);
@@ -13,62 +11,50 @@ function getTimeFromObj(timeObj) {
     }
   }
 
-  // range: array of two values (string "HH:MM" or number)
+  // range: array of two values
   if (timeObj.range !== undefined && Array.isArray(timeObj.range)) {
     let [start, end] = timeObj.range;
 
     const startMins = typeof start === "number" ? start * 60 : parseTimeToMinutes(start);
     const endMins = typeof end === "number" ? end * 60 : parseTimeToMinutes(end);
 
-    const randomMins = Math.floor(Math.random() * (endMins - startMins + 1)) + startMins;
+    const randomMins = startMins + Math.floor(Math.random() * (endMins - startMins + 1));
     return minutesToHHMM(randomMins);
   }
 
   return "09:00";
 }
 
-// Convert "HH:MM" string to total minutes
+// Helper functions
 function parseTimeToMinutes(timeStr) {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 }
-
-// Convert minutes to "HH:MM"
 function minutesToHHMM(totalMins) {
   const h = Math.floor(totalMins / 60);
   const m = totalMins % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-// Core function — random time per row
+// Core function: generate random per row
 function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
   $("tr[id^='ctl00_mp_RG_Days_'][id*='_row_']").each(function () {
     const $row = $(this);
 
-    // generate random time for this row
+    // generate a new random for each row
     const startTime = getTimeFromObj(startTimeObj);
     const endTime = getTimeFromObj(endTimeObj);
 
-    $row
-      .find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input")
-      .val(startTime);
-
-    $row
-      .find("td[id*='_ManualExit_EmployeeReports_row_'] input")
-      .val(endTime);
-
-    $row
-      .find("select[id*='SymbolId_EmployeeReports']")
-      .val(symbolId)
-      .trigger("change");
+    $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val(startTime);
+    $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input").val(endTime);
+    $row.find("select[id*='SymbolId_EmployeeReports']").val(symbolId).trigger("change");
   });
 }
 
 // Wrappers
 function fillAttendanceOffice(startTimeObj, endTimeObj) {
-  fillAttendance(startTimeObj, endTimeObj, "0"); // Office
+  fillAttendance(startTimeObj, endTimeObj, "0");
 }
-
 function fillAttendanceHome(startTimeObj, endTimeObj) {
-  fillAttendance(startTimeObj, endTimeObj, "7"); // Home
+  fillAttendance(startTimeObj, endTimeObj, "7");
 }

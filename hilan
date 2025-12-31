@@ -1,23 +1,22 @@
-// Helper: parse time string or generate random time
 function getTimeFromObj(timeObj) {
   if (!timeObj) return "09:00"; // default fallback
 
-  // exactTime can be string "HH:MM" or number for hours
+  // exactTime: use string as-is or convert number to HH:MM
   if (timeObj.exactTime !== undefined) {
     if (typeof timeObj.exactTime === "string") {
-      return timeObj.exactTime;
-    } else if (typeof timeObj.exactTime === "number") {
+      return timeObj.exactTime; // <-- exact string, no change
+    }
+    if (typeof timeObj.exactTime === "number") {
       const hour = Math.floor(timeObj.exactTime);
       const minutes = Math.round((timeObj.exactTime - hour) * 60);
       return `${String(hour).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
     }
   }
 
-  // range: array of two times, can be strings "HH:MM" or numbers
+  // range: array of two values (string "HH:MM" or number)
   if (timeObj.range !== undefined && Array.isArray(timeObj.range)) {
     let [start, end] = timeObj.range;
 
-    // convert number to minutes
     const startMins = typeof start === "number" ? start * 60 : parseTimeToMinutes(start);
     const endMins = typeof end === "number" ? end * 60 : parseTimeToMinutes(end);
 
@@ -25,7 +24,6 @@ function getTimeFromObj(timeObj) {
     return minutesToHHMM(randomMins);
   }
 
-  // fallback
   return "09:00";
 }
 

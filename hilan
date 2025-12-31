@@ -1,0 +1,2 @@
+$("tr[id^='ctl00_mp_RG_Days_'][id*='_row_'] td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val("09:00");
+$("tr[id^='ctl00_mp_RG_Days_'][id*='_row_'] td[id*='_ManualExit_EmployeeReports_row_'] input").val("18:00");

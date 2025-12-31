@@ -48,7 +48,7 @@ function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
     $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val(startTime);
     $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input").val(endTime);
     $row.find("select[id*='SymbolId_EmployeeReports']").val(symbolId).trigger("change");
-    $row.find("td[id*='cellOf_ManualTotal_EmployeeReports'] span").focus();
+    $row.find("td[id*='cellOf_Comment_EmployeeReports_row'] input").focus();
 
   });
 }

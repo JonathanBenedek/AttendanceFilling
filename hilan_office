@@ -1,0 +1,7 @@
+function fillAttendance(startTime, endTime) {
+  $("tr[id^='ctl00_mp_RG_Days_'][id*='_row_'] td[id*='cellOf_ManualEntry_EmployeeReports_row'] input")
+    .val(startTime);
+
+  $("tr[id^='ctl00_mp_RG_Days_'][id*='_ManualExit_EmployeeReports_row_'] input")
+    .val(endTime);
+}

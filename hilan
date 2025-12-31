@@ -1,5 +1,52 @@
-// Core function — does all the work
-function fillAttendance(startTime, endTime, symbolId = "0") {
+// Helper: parse time string or generate random time
+function getTimeFromObj(timeObj) {
+  if (!timeObj) return "09:00"; // default fallback
+
+  // exactTime can be string "HH:MM" or number for hours
+  if (timeObj.exactTime !== undefined) {
+    if (typeof timeObj.exactTime === "string") {
+      return timeObj.exactTime;
+    } else if (typeof timeObj.exactTime === "number") {
+      const hour = Math.floor(timeObj.exactTime);
+      const minutes = Math.round((timeObj.exactTime - hour) * 60);
+      return `${String(hour).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    }
+  }
+
+  // range: array of two times, can be strings "HH:MM" or numbers
+  if (timeObj.range !== undefined && Array.isArray(timeObj.range)) {
+    let [start, end] = timeObj.range;
+
+    // convert number to minutes
+    const startMins = typeof start === "number" ? start * 60 : parseTimeToMinutes(start);
+    const endMins = typeof end === "number" ? end * 60 : parseTimeToMinutes(end);
+
+    const randomMins = Math.floor(Math.random() * (endMins - startMins + 1)) + startMins;
+    return minutesToHHMM(randomMins);
+  }
+
+  // fallback
+  return "09:00";
+}
+
+// Convert "HH:MM" string to total minutes
+function parseTimeToMinutes(timeStr) {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+}
+
+// Convert minutes to "HH:MM"
+function minutesToHHMM(totalMins) {
+  const h = Math.floor(totalMins / 60);
+  const m = totalMins % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+// Core function
+function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
+  const startTime = getTimeFromObj(startTimeObj);
+  const endTime = getTimeFromObj(endTimeObj);
+
   $("tr[id^='ctl00_mp_RG_Days_'][id*='_row_']").each(function () {
     const $row = $(this);
 
@@ -18,12 +65,11 @@ function fillAttendance(startTime, endTime, symbolId = "0") {
   });
 }
 
-// Wrapper for Office
-function fillAttendanceOffice(startTime, endTime) {
-  fillAttendance(startTime, endTime, "0"); // Office = 0
+// Wrappers
+function fillAttendanceOffice(startTimeObj, endTimeObj) {
+  fillAttendance(startTimeObj, endTimeObj, "0"); // Office
 }
 
-// Wrapper for Home
-function fillAttendanceHome(startTime, endTime) {
-  fillAttendance(startTime, endTime, "7"); // Home = 7
+function fillAttendanceHome(startTimeObj, endTimeObj) {
+  fillAttendance(startTimeObj, endTimeObj, "7"); // Home
 }

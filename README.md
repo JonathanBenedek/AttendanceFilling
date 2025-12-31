@@ -13,14 +13,15 @@ Supports both **Office** and **Home** attendance. You can specify **exact times*
 
 ---
 
-## How It Works
+## How To Use
 
-1. Load the script from GitHub using `fetch` and `eval`.
-2. Call the wrapper functions:
-
-- `fillAttendanceOffice(startTimeObj, endTimeObj)` – Fill office attendance
-- `fillAttendanceHome(startTimeObj, endTimeObj)` – Fill home attendance
-
+1. **Select the chosen days** on the Hilan interface.  
+2. Click **"Selected Days"**.  
+3. Open **Developer Tools / Inspect**:  
+   - Windows: `Ctrl + Shift + I`  
+   - Mac: `Cmd + Option + I`  
+4. Copy the relevant script and run it in the console.  
+   See the **Examples** section below to see the supported scripts.
 ---
 
 ## Examples

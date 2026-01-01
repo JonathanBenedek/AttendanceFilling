@@ -86,6 +86,8 @@ function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
         triggerTouch(endTimeCell[0], 'focus');
         triggerTouch(endTimeCell[0], 'blur');
     }
+    
+    $row.find("select[id*='SymbolId_EmployeeReports']").val(symbolId).trigger("change");
   });
 }
 

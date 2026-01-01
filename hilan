@@ -1,7 +1,6 @@
 function triggerTouch(element, eventType) {
   const event = document.createEvent('Event');
   event.initEvent(eventType, false, true);
-  element.dispatchEvent(event);
 }
 
 function clickWeekdays(weekdaysArray) {

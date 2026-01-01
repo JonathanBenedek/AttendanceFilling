@@ -82,8 +82,10 @@ function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
     $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val(startTime);
     const endTimeCell = $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input");
     endTimeCell.val(endTime);
-    triggerTouch(endTimeCell[0], 'focus');
-    triggerTouch(endTimeCell[0], 'blur');
+    if (endTimeCell[0]){
+        triggerTouch(endTimeCell[0], 'focus');
+        triggerTouch(endTimeCell[0], 'blur');
+    }
   });
 }
 

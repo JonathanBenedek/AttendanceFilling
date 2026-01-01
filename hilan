@@ -1,3 +1,10 @@
+function triggerTouch(element, eventType) {
+  const event = document.createEvent('Event');
+  event.initEvent(eventType, false, true);
+  element[eventType]();
+  element.dispatchEvent(event);
+}
+
 function clickWeekdays(weekdaysArray) {
     if (!Array.isArray(weekdaysArray)) return;
     const weekdays = weekdaysArray
@@ -71,11 +78,10 @@ function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
     const endTime = getTimeFromObj(endTimeObj);
 
     $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val(startTime);
-    $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input").val(endTime);
-    $row.find("select[id*='SymbolId_EmployeeReports']").val(symbolId).trigger("change");
-    $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input").focus();
-    $row.find("td[id*='cellOf_Comment_EmployeeReports_row'] input").focus();
-
+    const endTimeCell = $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input");
+    endTimeCell.val(endTime);
+    triggerTouch(endTimeCell, 'focus');
+    triggerTouch(endTimeCell, 'blur');
   });
 }
 

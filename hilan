@@ -21,7 +21,6 @@ function clickWeekdays(weekdaysArray) {
         cells.forEach((cell, index) => {
             const dayOfWeek = index; // index 0 is week selector, 1 = Sunday, ... 7 = Saturday
             if (weekdays.includes(dayOfWeek)) {
-                // Trigger click
                 cell.click();
             }
         });

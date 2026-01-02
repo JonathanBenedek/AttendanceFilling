@@ -135,7 +135,7 @@ function submit() {
  ***********************/
 function start(params) {
   if (!params || !params.startTime || !params.endTime) return;
-
+  console.log("Start auto fill...");
   if (params.days) {
     clickWeekdays({ days: params.days });
   }
@@ -150,5 +150,7 @@ function start(params) {
         break;
     }
     submit();
+    console.log("Auto-fill completed. Click OK on the popup.");
+
   }, 2000)
 }

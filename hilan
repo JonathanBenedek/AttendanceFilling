@@ -10,27 +10,46 @@ function triggerTouch(element, eventType) {
 
 function clickWeekdays(weekdaysArray) {
     if (!Array.isArray(weekdaysArray)) return;
+
     const weekdays = weekdaysArray
-        .filter(n => n >= 1 && n <= 7) // ignore invalid values like 0
+        .filter(n => n >= 1 && n <= 7)
         .map(n => n - 1);
-    // Get all rows of the calendar (skip header rows)
+
     const calendar = document.getElementById('calendar_container');
     if (!calendar) return;
 
-    const rows = Array.from(calendar.querySelectorAll('tr')).slice(2); // Skip headers
+    const today = new Date().getDate(); // 👈 current day of month
+
+    const rows = Array.from(calendar.querySelectorAll('tr')).slice(2);
 
     rows.forEach(row => {
         const cells = row.querySelectorAll('td.cDIES, td.cHD, td.calendarAbcenseDay');
+
         cells.forEach((cell, index) => {
-            const dayOfWeek = index; // index 0 is week selector, 1 = Sunday, ... 7 = Saturday
-            if (weekdays.includes(dayOfWeek)) {
+            const dayOfWeek = index;
+
+            if (!weekdays.includes(dayOfWeek)) return;
+
+            // 🔹 Extract day-of-month from the cell
+            const dayCell = cell.querySelector('.dTS');
+            if (!dayCell) return;
+
+            const dayNumber = parseInt(dayCell.textContent, 10);
+            if (isNaN(dayNumber)) return;
+
+            // 🔹 Only select days that already passed
+            if (dayNumber < today) {
                 cell.click();
             }
         });
     });
+
     const refreshButton = document.getElementById('ctl00_mp_RefreshSelectedDays');
-    refreshButton.click();
+    if (refreshButton) {
+        refreshButton.click();
+    }
 }
+
 
 function getTimeFromObj(timeObj) {
   if (!timeObj) return "09:00";

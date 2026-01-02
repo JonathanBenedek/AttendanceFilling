@@ -15,7 +15,7 @@ Supports both **Office** and **Home** attendance. You can specify **exact times*
 
 ## How To Use
 
-1. Go To 'Report $ Update' page on the Hilan website.  
+1. Go To 'Report & Update' page on the Hilan website.  
 2. Open **Developer Tools / Inspect**:  
    - Windows: `Ctrl + Shift + I`  
    - Mac: `Cmd + Option + I`  

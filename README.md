@@ -26,29 +26,38 @@ Supports both **Office** and **Home** attendance. You can specify **exact times*
 
 ## Examples
 
-### 1. Office Attendance with Exact Time
+### 1. Office Attendance
 
 ```javascript
 fetch("https://raw.githubusercontent.com/JonathanBenedek/AttendanceFilling/main/hilan")
   .then(r => r.text())
   .then(code => {
     eval(code);
-    fillAttendanceOffice({ exactTime: "08:30" }, { exactTime: "08:40" });
+    start({
+      where: "home",
+      startTime: { exactTime: "09:11" },
+      endTime: { range: ["17:30", "18:30"] },
+      days: [1]
+    });
   });
+
 ```
 
-  ### 2. Home Attendance with Range Time
+  ### 2. Home Attendance
 
 ```javascript
 fetch("https://raw.githubusercontent.com/JonathanBenedek/AttendanceFilling/main/hilan")
   .then(r => r.text())
   .then(code => {
     eval(code);
-    fillAttendanceHome(
-      { range: ["08:30", "09:15"] },
-      { range: ["17:15", "18:30"] }
-    );
+    start({
+      where: "home",
+      startTime: { exactTime: "09:11" },
+      endTime: { range: ["17:30", "18:30"] },
+      days: [1, 2, 3, 4, 5]
+    });
   });
+
 ```
 
 https://github.com/user-attachments/assets/8b707023-b698-4195-832f-49241999f4b1

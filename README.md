@@ -15,12 +15,11 @@ Supports both **Office** and **Home** attendance. You can specify **exact times*
 
 ## How To Use
 
-1. **Select the chosen days** on the Hilan interface.  
-2. Click **"Selected Days"**.  
-3. Open **Developer Tools / Inspect**:  
+1. Go To 'Report $ Update' page on the Hilan website.  
+2. Open **Developer Tools / Inspect**:  
    - Windows: `Ctrl + Shift + I`  
    - Mac: `Cmd + Option + I`  
-4. Copy the relevant script and run it in the console.  
+3. Copy the relevant script (Office or Home) and run it in the console.  
    See the **Examples** section below to see the supported scripts.
 ---
 

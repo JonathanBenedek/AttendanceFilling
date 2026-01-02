@@ -1,76 +1,74 @@
+/***********************
+ * Touch / Event utils
+ ***********************/
 function triggerTouch(element, eventType) {
   const event = document.createEvent('Event');
   event.initEvent(eventType, false, true);
-  if (!element[eventType]){
-    return;
-  }
+  if (!element || !element[eventType]) return;
   element[eventType]();
   element.dispatchEvent(event);
 }
 
-function clickWeekdays(weekdaysArray) {
-    if (!Array.isArray(weekdaysArray)) return;
+/***********************
+ * Calendar day clicker
+ ***********************/
+function clickWeekdays(params) {
+  if (!params || !Array.isArray(params.days)) return;
 
-    const weekdays = weekdaysArray
-        .filter(n => n >= 1 && n <= 7)
-        .map(n => n - 1);
+  const weekdays = params.days
+    .filter(n => n >= 1 && n <= 7)
+    .map(n => n - 1); // 1=Sun → 0, 7=Sat → 6
 
-    const calendar = document.getElementById('calendar_container');
-    if (!calendar) return;
+  const calendar = document.getElementById('calendar_container');
+  if (!calendar) return;
 
-    const today = new Date().getDate();
+  const today = new Date().getDate();
+  const rows = Array.from(calendar.querySelectorAll('tr')).slice(2); // skip headers
 
-    const rows = Array.from(calendar.querySelectorAll('tr')).slice(2);
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td.cDIES, td.cHD, td.calendarAbcenseDay');
 
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td.cDIES, td.cHD, td.calendarAbcenseDay');
+    cells.forEach((cell, index) => {
+      if (!weekdays.includes(index)) return;
 
-        cells.forEach((cell, index) => {
-            const dayOfWeek = index;
+      const dayCell = cell.querySelector('.dTS');
+      if (!dayCell) return;
 
-            if (!weekdays.includes(dayOfWeek)) return;
+      const dayNumber = parseInt(dayCell.textContent, 10);
+      if (isNaN(dayNumber)) return;
 
-            // 🔹 Extract day-of-month from the cell
-            const dayCell = cell.querySelector('.dTS');
-            if (!dayCell) return;
-
-            const dayNumber = parseInt(dayCell.textContent, 10);
-            if (isNaN(dayNumber)) return;
-
-            // 🔹 Only select days that already passed
-            if (dayNumber < today) {
-                cell.click();
-            }
-        });
+      // only past days
+      if (dayNumber < today) {
+        cell.click();
+      }
     });
+  });
 
-    const refreshButton = document.getElementById('ctl00_mp_RefreshSelectedDays');
-    if (refreshButton) {
-        refreshButton.click();
-    }
+  const refreshButton = document.getElementById('ctl00_mp_RefreshSelectedDays');
+  if (refreshButton) refreshButton.click();
 }
 
-
+/***********************
+ * Time helpers
+ ***********************/
 function getTimeFromObj(timeObj) {
   if (!timeObj) return "09:00";
 
-  // exactTime: string or number
+  // exactTime
   if (timeObj.exactTime !== undefined) {
     if (typeof timeObj.exactTime === "string") return timeObj.exactTime;
     if (typeof timeObj.exactTime === "number") {
-      const hour = Math.floor(timeObj.exactTime);
-      const minutes = Math.round((timeObj.exactTime - hour) * 60);
-      return `${String(hour).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+      const h = Math.floor(timeObj.exactTime);
+      const m = Math.round((timeObj.exactTime - h) * 60);
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
     }
   }
 
-  // range: array of two values
-  if (timeObj.range !== undefined && Array.isArray(timeObj.range)) {
-    let [start, end] = timeObj.range;
-
+  // range
+  if (Array.isArray(timeObj.range)) {
+    const [start, end] = timeObj.range;
     const startMins = typeof start === "number" ? start * 60 : parseTimeToMinutes(start);
     const endMins = typeof end === "number" ? end * 60 : parseTimeToMinutes(end);
-
     const randomMins = startMins + Math.floor(Math.random() * (endMins - startMins + 1));
     return minutesToHHMM(randomMins);
   }
@@ -78,43 +76,79 @@ function getTimeFromObj(timeObj) {
   return "09:00";
 }
 
-// Helper functions
 function parseTimeToMinutes(timeStr) {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 }
+
 function minutesToHHMM(totalMins) {
   const h = Math.floor(totalMins / 60);
   const m = totalMins % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-// Core function: generate random per row
+/***********************
+ * Attendance filling
+ ***********************/
 function fillAttendance(startTimeObj, endTimeObj, symbolId = "0") {
   $("tr[id^='ctl00_mp_RG_Days_'][id*='_row_']").each(function () {
     const $row = $(this);
 
-    // generate a new random for each row
+    // random per row
     const startTime = getTimeFromObj(startTimeObj);
     const endTime = getTimeFromObj(endTimeObj);
 
-    $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input").val(startTime);
+    $row.find("td[id*='cellOf_ManualEntry_EmployeeReports_row'] input")
+        .val(startTime);
+
     const endTimeCell = $row.find("td[id*='_ManualExit_EmployeeReports_row_'] input");
     endTimeCell.val(endTime);
-    $row.find("select[id*='SymbolId_EmployeeReports']").val(symbolId).trigger("change");
 
-    if (endTimeCell[0]){
-        triggerTouch(endTimeCell[0], 'focus');
-        triggerTouch(endTimeCell[0], 'blur');
+    $row.find("select[id*='SymbolId_EmployeeReports']")
+        .val(symbolId)
+        .trigger("change");
+
+    if (endTimeCell[0]) {
+      triggerTouch(endTimeCell[0], "focus");
+      triggerTouch(endTimeCell[0], "blur");
     }
-    
   });
 }
 
-// Wrappers
 function fillAttendanceOffice(startTimeObj, endTimeObj) {
   fillAttendance(startTimeObj, endTimeObj, "0");
 }
+
 function fillAttendanceHome(startTimeObj, endTimeObj) {
   fillAttendance(startTimeObj, endTimeObj, "7");
+}
+
+/***********************
+ * Submit
+ ***********************/
+function submit() {
+  $("input[type='submit'][id*='btnSave']").click();
+}
+
+/***********************
+ * Entry point
+ ***********************/
+function start(params) {
+  if (!params || !params.startTime || !params.endTime) return;
+
+  if (params.days) {
+    clickWeekdays({ days: params.days });
+  }
+  setTimeout(()=> {
+    switch (params.where) {
+      case "home":
+        fillAttendanceHome(params.startTime, params.endTime);
+        break;
+      case "office":
+      default:
+        fillAttendanceOffice(params.startTime, params.endTime);
+        break;
+    }
+    submit();
+  }, 2000)
 }

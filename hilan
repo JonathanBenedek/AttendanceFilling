@@ -18,7 +18,7 @@ function clickWeekdays(weekdaysArray) {
     const calendar = document.getElementById('calendar_container');
     if (!calendar) return;
 
-    const today = new Date().getDate(); // 👈 current day of month
+    const today = new Date().getDate();
 
     const rows = Array.from(calendar.querySelectorAll('tr')).slice(2);
 

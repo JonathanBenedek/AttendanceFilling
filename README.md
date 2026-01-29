@@ -33,7 +33,6 @@ fetch("https://raw.githubusercontent.com/JonathanBenedek/AttendanceFilling/main/
   .then(code => {
     eval(code);
     start({
-      where: "home",
       startTime: { exactTime: "09:11" },
       endTime: { range: ["17:30", "18:30"] },
       days: [1]
